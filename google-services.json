@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "885589951102",
+    "project_id": "e-ttendance-fyp-application",
+    "storage_bucket": "e-ttendance-fyp-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885589951102:android:c23c26e1d336775db48e2f",
+        "android_client_info": {
+          "package_name": "com.odietedean19CG026454.fyp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDowvHOW5nHH7rswHLkAUE1KuqkAMgUcUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
