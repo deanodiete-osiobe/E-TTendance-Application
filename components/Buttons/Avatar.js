@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {firebase} from '../../firebase'
 
 // styled components
 import styled from 'styled-components/native';
 import { colors } from '../colors';
 const { primary,secondary,accent } = colors;
 import ProfileModal from '../Modals/ProfileModal';
+import { useNavigation } from '@react-navigation/native';
 
 const StyledView = styled.TouchableOpacity`
     background-color: ${primary};
@@ -20,6 +22,7 @@ const StyledView = styled.TouchableOpacity`
     `;
 
     const Avatar = (props) => {
+        navigation = useNavigation();
         //modal
         const[modalVisible,setModalVisible] = useState(false);
         const[headerText,setHeaderText] = useState('');
@@ -30,12 +33,21 @@ const StyledView = styled.TouchableOpacity`
             setloggingOut(true);
 
             //clear user credentials
+            firebase.auth().signOut().then(() => {
+                console.log("User signed out");
+                setloggingOut(false);
+                setModalVisible(false);
+                navigation.navigate('Login');
 
-            setloggingOut(false);
-            setModalVisible(false);
+              }).catch((error) => {
+                console.error("Error signing out: ", error);
+              });
+
+            
 
 
-            //move to login
+
+            
         };
 
     const showProfileModal =(user) => {

@@ -8,49 +8,50 @@ const { primary } = colors;
 // Import your custom components here
 
 import MainContainer from '../components/Containers/MainContainer';
-import KeyboardAvoidingContainer from '../components/Containers/KeyboardAvoidingContainer';
+// import KeyboardAvoidingContainer from '../components/Containers/KeyboardAvoidingContainer';
 import RegularText from '../components/Texts/RegularText';
-import StyledTextInput from '../components/Containers/Inputs/StyledTextInput';
-import MsgBox from '../components/Texts/MsgBox';
-import RegularButton from '../components/Buttons/RegularButton';
+// import StyledTextInput from '../components/Containers/Inputs/StyledTextInput';
+// import MsgBox from '../components/Texts/MsgBox';
+// import RegularButton from '../components/Buttons/RegularButton';
 import IconHeader from '../components/Icons/IconHeader';
+import { View } from 'react-native';
 
 
 const ForgotPassword = ({ navigation }) => {
-    const [message, setMessage] = useState('');
-    const [isSuccessMessage,setIsSuccessMessage] = useState(false);
+    // const [message, setMessage] = useState('');
+    // const [isSuccessMessage,setIsSuccessMessage] = useState(false);
 
 
-    const moveTo= (screen, payload) => {
-        navigation.navigate(screen, {...payload});
-    };
+    // const moveTo= (screen, payload) => {
+    //     navigation.navigate(screen, {...payload});
+    // };
 
-    const handleOnSubmit = async (credentials, setSubmitting) => {
-        try {
-            setMessage(null);
+//     const handleOnSubmit = async (credentials, setSubmitting) => {
+//         try {
+//             setMessage(null);
 
-            //call backend
+//             //call backend
 
-            //move to next page
+//             //move to next page
 
-            moveTo('ResetPassword');
-            setSubmitting(false);
-        } catch (error) {
-            setMessage('Request failed: ' + error.message);
-            setSubmitting(false);
-    }
-};
+//             moveTo('ResetPassword');
+//             setSubmitting(false);
+//         } catch (error) {
+//             setMessage('Request failed: ' + error.message);
+//             setSubmitting(false);
+//     }
+// };
 
 
 
     return (
         <MainContainer>
-            <KeyboardAvoidingContainer>
-                <IconHeader name="key" style ={{marginBottom: 30}}/>
-                <RegularText style={{marginBottom: 25 }}>Provide the details to begin the process</RegularText>
+            <View style={{display:'flex', alignItems:'center', justifyContent:'center', height: '100%'}}>
+                <IconHeader name="key" style ={{marginBottom: 10}}/>
+                <RegularText style={{marginBottom: 25 }}>Please Contact Your Adminstrator</RegularText>
 
                 {/* Use Formik within a JSX context */}
-                <Formik 
+                {/* <Formik 
                 initialValues={{email: ''}}
                     onSubmit={(values, {setSubmitting}) => {
                         if (values.email == '') {
@@ -90,8 +91,8 @@ const ForgotPassword = ({ navigation }) => {
                     
                         </>
                     )}
-                </Formik>
-            </KeyboardAvoidingContainer>
+                </Formik> */}
+            </View>
         </MainContainer>
     );
 };

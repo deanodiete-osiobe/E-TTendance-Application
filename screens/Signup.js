@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import { Formik } from 'formik';
 import { ActivityIndicator } from 'react-native';
 import { colors } from '../components/colors';
-import { auth} from '../firebase'
+import { firebase} from '../firebase'
 import {createUserWithEmailAndPassword} from 'firebase/auth'
 const { primary } = colors;
 
@@ -33,7 +33,8 @@ const Signup= ({ navigation }) => {
             console.log('called')
             console.log(credentials)
             
-                createUserWithEmailAndPassword(auth, credentials?.email, credentials?.password)
+            firebase
+            .auth().createUserWithEmailAndPassword(credentials?.email, credentials?.password)
                 .then(userCredentials => {
                     const user = userCredentials.user;
                     console.log(user);

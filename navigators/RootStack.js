@@ -132,6 +132,7 @@ const Stack = createStackNavigator();
                     borderBottomWidth: 0,
                     shadowOpacity: 0,
                     elevation: 0,
+                    
                 },                          
         }} 
         />
@@ -142,13 +143,15 @@ const Stack = createStackNavigator();
                 name="VerificationSuccessful" 
                 component={VerificationSuccessful} 
                 options= {{
-                    headerTitle: 'Confirmation' ,           
+                    headerTitle: 'Confirmation' ,
+                    headerLeft: () => null,           
                     headerStyle: {
                     height: 100,
                     backgroundColor: accent,
                     borderBottomWidth: 0,
                     shadowOpacity: 0,
                     elevation: 0,
+                    
                 },                         
         }} 
         />
