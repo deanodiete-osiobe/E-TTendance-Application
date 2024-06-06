@@ -39,7 +39,7 @@ const Signup= ({ navigation }) => {
                     const user = userCredentials.user;
                     console.log(user);
                     console.log(user.email)})
-                    moveTo('EmailVerification');
+                    moveTo('Login');
 
             setSubmitting(false);
         }

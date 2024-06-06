@@ -7,22 +7,27 @@ const { primary, accent } = colors;
 const AdminDashboard = () => {
   const handleManageUsers = () => {
     // Logic to navigate to manage users screen
+    navigation.navigate('ManageUsers');
   };
 
   const handleManageCourses = () => {
     // Logic to navigate to manage courses screen
+    navigation.navigate('ManageCourses');
   };
 
   const handleManageDepartments = () => {
     // Logic to navigate to manage departments screen
+    navigation.navigate('ManageDepartments');
   };
 
   const handleViewActivity = () => {
     // Logic to navigate to view activity screen
+    navigation.navigate('ViewActivity');
   };
 
   const handleConfirmChanges = () => {
     // Logic to confirm changes and trigger backend actions
+    navigation.navigate('ConfirmChanges');
   };
 
   return (
