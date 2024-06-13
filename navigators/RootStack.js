@@ -25,6 +25,8 @@ import ManageUsers from '../screens/ManageUsers';
 import ManageCourses from '../screens/ManageCourses';
 import ManageDepartments from '../screens/ManageDepartments';
 import ViewActivity from '../screens/ViewActivity';
+import ViewAttendanceData from '../screens/ViewAttendanceData';
+import ViewAbsenteeAndDefaulterData from '../screens/ViewAbsenteeAndDefaulters';
 
 
 
@@ -203,7 +205,34 @@ const RootStack = () => {
             },
           }}
         />
-          
+        <Stack.Screen
+          name="ViewAttendanceData"
+          component={ViewAttendanceData}
+          options={{
+            headerTitle: 'View Attendance Data',
+            headerStyle: {
+              height: 100,
+              backgroundColor: accent,
+              borderBottomWidth: 0,
+              shadowOpacity: 0,
+              elevation: 0,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ViewAbsenteeAndDefaulterData"
+          component={ViewAbsenteeAndDefaulterData}
+          options={{
+            headerTitle: 'View Absentee/Defaulter Data',
+            headerStyle: {
+              height: 100,
+              backgroundColor: accent,
+              borderBottomWidth: 0,
+              shadowOpacity: 0,
+              elevation: 0,
+            },
+          }}
+        />
 
 
 

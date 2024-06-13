@@ -8,7 +8,7 @@ const ViewActivity = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const statusSnapshot = await firebase.firestore().collection('Status').get();
+        const statusSnapshot = await firebase.firestore().collection('exam-hall-stats').get();
         const statusList = statusSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setStatus(statusList);
       } catch (error) {
@@ -26,7 +26,9 @@ const ViewActivity = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.courseItem}>
-            <Text>{item.name}</Text>
+              <Text>
+              {item.invigilatorEmail} uploaded attendance for {item.course} in {item.department} on {new Date(item.creation_date.seconds * 1000).toLocaleString()}
+            </Text>
           </View>
         )}
       />

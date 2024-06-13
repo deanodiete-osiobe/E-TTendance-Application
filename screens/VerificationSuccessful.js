@@ -7,7 +7,7 @@ const { primary, accent,success,fail } = colors;
 import { firebase } from '../firebase';
 
 const VerificationSuccessful = () => {
-  navigation= useNavigation();
+  const navigation= useNavigation();
   const onLogout = async() => {
 
     //clear user credentials

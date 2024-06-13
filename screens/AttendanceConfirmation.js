@@ -21,8 +21,10 @@ const AttendanceConfirmation = () => {
   const handleConfirm = async () => {
   
     try {
+      
       await firebase.firestore().collection('exam-hall-stats').add(examData);
       console.log('Data submitted successfully');
+      console.log(examData);
       setUploadSuccessful(true);
       navigation.navigate('VerificationSuccessful');
       
@@ -56,20 +58,47 @@ const AttendanceConfirmation = () => {
 
   //   return unsubscribe;
   // }, [navigation, isUploadSuccessful]);
+  
 
 
   return (
-    <View style={styles.container} >
+    // <View style={styles.container} >
+    //   <FlatList
+    //     data={examDataArray}
+    //     keyExtractor={(item) => item[0]} // Use the key (property name) as the unique identifier
+    //     renderItem={({ item }) => (
+    //       <View style={styles.itemContainer}>
+    //         <Text style={styles.itemKey}>{formatString(item[0])+':'}</Text>
+    //         <Text style={styles.itemValue}>{String(item[1])}</Text> 
+    //       </View>
+    //     )}
+    //   />
+    <View style={styles.container}>
       <FlatList
-        data={examDataArray}
+        data={examDataArray.filter(item => item[1] !== '' && item[1] !== null)}
         keyExtractor={(item) => item[0]} // Use the key (property name) as the unique identifier
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Text style={styles.itemKey}>{formatString(item[0])+':'}</Text>
-            <Text style={styles.itemValue}>{String(item[1])}</Text> 
-          </View>
+          item[0] === 'defaulters' ? (
+            <View style={styles.defaulterContainer}>
+              <Text style={styles.itemKey}>{formatString(item[0]) + ':'}</Text>
+              {item[1].lenght>0&&item[1].map((defaulter, index) => (
+                <View key={index} style={styles.defaulterDetails}>
+                  <Text style={{ color: 'red' }}>Defaulter No. {index+1}</Text>
+                  <Text style={styles.itemValue}>Matric Number: {defaulter.matric}</Text>
+                  <Text style={styles.itemValue}>First Name: {defaulter.firstName}</Text>
+                  <Text style={styles.itemValue}>Surname: {defaulter.surname}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.itemContainer}>
+              <Text style={styles.itemKey}>{formatString(item[0]) + ':'}</Text>
+              <Text style={styles.itemValue}>{String(item[1])}</Text>
+            </View>
+          )
         )}
       />
+    
 
       
         <Text style={styles.message}>
@@ -122,6 +151,10 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#d3d3d3',
   },
+  defaulterDetails: {
+    paddingLeft: 10,
+    paddingTop: 5,
+  }
 });
 
 export default AttendanceConfirmation;

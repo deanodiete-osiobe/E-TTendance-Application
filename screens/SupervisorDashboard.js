@@ -1,29 +1,43 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { colors } from '../components/colors';
+import { useNavigation } from '@react-navigation/native';
+import { firebase } from '../firebase';
 
 const { primary, accent } = colors;
 
 const SupervisorDashboard = () => {
+  const navigation = useNavigation();
+  
   const viewAttendanceData = () => {
     // Logic to navigate to view Attendance data
+
+    navigation.navigate('ViewAttendanceData');
   };
 
-  const viewAbsentStudents = () => {
+  const viewAbsentAndDefaulterStudents = () => {
     // Logic to navigate to view Absentee screen
+    navigation.navigate('ViewAbsenteeAndDefaulterData');
   };
 
-  const viewDefaulters = () => {
-    // Logic to navigate to view defaulters screen
-  };
 
-  const exportToSheets = () => {
-    // Logic to export file to sheets
-  };
+  const handleLogout = async() => {
 
-  const logOut = () => {
-    // Logic to return to Login Screen
-  };
+    //clear user credentials
+    firebase.auth().signOut().then(() => {
+        console.log("User signed out");
+        navigation.navigate('Login');
+
+      }).catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+
+    
+
+
+
+    
+};
 
   return (
     <View style={styles.container}>
@@ -33,17 +47,12 @@ const SupervisorDashboard = () => {
       </TouchableOpacity>
 
       {/* View Absentee button */}
-      <TouchableOpacity style={styles.button} onPress={viewAbsentStudents}>
-        <Text style={styles.buttonText}>View Absentee Students</Text>
-      </TouchableOpacity>
-
-      {/* View Defaulters button */}
-      <TouchableOpacity style={styles.button} onPress={viewDefaulters}>
-        <Text style={styles.buttonText}>View Defaulters</Text>
+      <TouchableOpacity style={styles.button} onPress={viewAbsentAndDefaulterStudents}>
+        <Text style={styles.buttonText}>View Absentee and Defaulters</Text>
       </TouchableOpacity>
 
       {/* Logout Button */}
-      <TouchableOpacity style={styles.button} onPress={logOut}>
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>

@@ -16,16 +16,22 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "../components/colors";
 const { primary, lightGray, accent } = colors;
 import { firebase } from "../firebase";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const UserDashboard = () => {
   const route = useRoute();
-  const {invigilatorEmail} = route.params;
+  const { invigilatorEmail } = route.params;
   const navigation = useNavigation();
 
   const [numberOfStudents, setNumberOfStudents] = useState("");
   const [isAbsenteesChecked, setIsAbsenteesChecked] = useState(false);
   const [isDefaultersChecked, setIsDefaultersChecked] = useState(false);
+  const [absenteeCount, setAbsenteeCount] = useState("");
+  const [defaulterCount, setDefaulterCount] = useState("");
+  const [defaulters, setDefaulters] = useState([
+    { matric: "", firstName: "", surname: "" },
+  ]);
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
@@ -55,7 +61,7 @@ const UserDashboard = () => {
   const [seatsWellSpaced, setSeatsWellSpaced] = useState(null);
   const [examHallClean, setExamHallClean] = useState(null);
   const [generalComment, setGeneralComment] = useState(null);
-  const[examVenue, setExamVenue] = useState('');
+  const [examVenue, setExamVenue] = useState("");
 
   const fetchCourseData = async () => {
     try {
@@ -64,7 +70,7 @@ const UserDashboard = () => {
         .collection("Courses")
         .get();
       const courses = coursesSnapshot.docs.map((doc) => ({
-        label: doc.data().course_code,
+        label: doc.data().course_name,
         value: doc.id,
       }));
       console.log("Courses:", courses);
@@ -121,7 +127,10 @@ const UserDashboard = () => {
     department,
     examVenue,
     isAbsenteesChecked,
+    absenteeCount,
     isDefaultersChecked,
+    defaulterCount,
+    defaulters,
     date: dateString,
     time: timeString,
     // examPapersMadeEarly,
@@ -135,14 +144,14 @@ const UserDashboard = () => {
     seatsWellSpaced,
     examHallClean,
     generalComment,
-    invigilatorEmail
+    invigilatorEmail,
   };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     } else {
-      navigation.navigate("AttendanceConfirmation", {examData});
+      navigation.navigate("AttendanceConfirmation", { examData });
     }
   };
 
@@ -151,11 +160,37 @@ const UserDashboard = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  const handleAbsenteeCountChange = (value) => {
+    const count = parseInt(value) || 0;
+    setAbsenteeCount(count);
+  }
+
+  const handleDefaulterCountChange = (value) => {
+    const count = parseInt(value) || 0;
+    setDefaulterCount(count);
+
+    // Initialize or trim the defaulters array based on count
+    const newDefaulters = [...defaulters];
+    if (count > defaulters.length) {
+      for (let i = defaulters.length; i < count; i++) {
+        newDefaulters.push({ matric: "", firstName: "", surname: "" });
+      }
+    } else {
+      newDefaulters.length = count;
+    }
+    setDefaulters(newDefaulters);
+  };
+  // Handle changes in individual defaulter fields
+  const handleDefaulterChange = (index, field, value) => {
+    const newDefaulters = [...defaulters];
+    newDefaulters[index][field] = value;
+    setDefaulters(newDefaulters);
+  };
+
   useEffect(() => {
     fetchCourseData();
     fetchDepartmentData();
   }, []);
- 
 
   return (
     <View style={styles.container}>
@@ -170,18 +205,17 @@ const UserDashboard = () => {
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
-                placeholder="Course Code"
+                placeholder="Select Course"
                 labelField="label"
                 valueField="label"
                 data={courseData}
                 isFocus={isFocus}
                 onFocus={() => {
                   setIsFocus(true);
-                  
                 }}
                 onBlur={() => setIsFocus(false)}
                 onChange={(item) => {
-                  setCourse(item.label)
+                  setCourse(item.label);
                   console.log(item.value);
                   setIsFocus(false);
                 }}
@@ -198,11 +232,10 @@ const UserDashboard = () => {
                 isFocus={isFocus}
                 onFocus={() => {
                   setIsFocus(true);
-                  
                 }}
                 onBlur={() => setIsFocus(false)}
                 onChange={(item) => {
-                  setDepartment(item.label)
+                  setDepartment(item.label);
                   console.log(item.value);
                   setIsFocus(false);
                 }}
@@ -232,7 +265,7 @@ const UserDashboard = () => {
       )}
 
       {currentPage === 2 && (
-        <>
+        <ScrollView>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Exam Location</Text>
             <TextInput
@@ -254,6 +287,20 @@ const UserDashboard = () => {
               <Text style={styles.checkboxLabel}>Any absentees?</Text>
             </View>
           </View>
+          <View style={styles.inputContainer}>
+            {isAbsenteesChecked && (
+              
+              
+              <TextInput
+                style={styles.input}
+                value={String(absenteeCount)}
+                onChangeText={handleAbsenteeCountChange}
+                keyboardType="numeric"
+                placeholder="Enter number of absentees"
+              />
+              
+            )}
+          </View>
           <View style={styles.checkboxContainer}>
             <View style={styles.checkboxGroup}>
               <CheckBox
@@ -265,6 +312,46 @@ const UserDashboard = () => {
               <Text style={styles.checkboxLabel}>Any defaulters?</Text>
             </View>
           </View>
+          <View style={styles.inputContainer}>
+            {isDefaultersChecked && (
+              <TextInput
+                style={styles.input}
+                value={String(defaulterCount)}
+                onChangeText={handleDefaulterCountChange}
+                keyboardType="numeric"
+                placeholder="Enter number of defaulters"
+              />
+            )}
+          </View>
+          {defaulterCount>0 && defaulters.map((defaulter, index) => (
+            <View key={index} style={styles.inputContainer}>
+              <Text style={{ fontWeight: 'bold' }}>Defaulter No. {index+1}</Text>
+              <TextInput
+              style={styles.input}
+                value={defaulter.matric}
+                onChangeText={(value) =>
+                  handleDefaulterChange(index, "matric", value)
+                }
+                placeholder="Matric Number"
+              />
+              <TextInput
+                style={styles.input}
+                value={defaulter.firstName}
+                onChangeText={(value) =>
+                  handleDefaulterChange(index, "firstName", value)
+                }
+                placeholder="First Name"
+              />
+              <TextInput
+                style={styles.input}
+                value={defaulter.surname}
+                onChangeText={(value) =>
+                  handleDefaulterChange(index, "surname", value)
+                }
+                placeholder="Surname"
+              />
+            </View>
+          ))}
 
           {/* New Questions with Radio Buttons */}
 
@@ -290,7 +377,7 @@ const UserDashboard = () => {
               </View>
             </RadioButton.Group>
           </View>
-        </>
+        </ScrollView>
       )}
 
       {currentPage === 3 && (

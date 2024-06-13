@@ -25,17 +25,14 @@ const AdminDashboard = () => {
     navigation.navigate('ViewActivity');
   };
 
-  const handleConfirmChanges = () => {
-    // Logic to confirm changes and trigger backend actions
-    navigation.navigate('ConfirmChanges');
-  };
+  
 
   return (
     <View style={styles.container}>
       {/* Manage Users Button */}
-      <TouchableOpacity style={styles.button} onPress={handleManageUsers}>
+      {/* <TouchableOpacity style={styles.button} onPress={handleManageUsers}>
         <Text style={styles.buttonText}>Manage Users</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Manage Courses Button */}
       <TouchableOpacity style={styles.button} onPress={handleManageCourses}>
@@ -52,10 +49,7 @@ const AdminDashboard = () => {
         <Text style={styles.buttonText}>View Activity</Text>
       </TouchableOpacity>
 
-      {/* Confirm Changes Button */}
-      <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={handleConfirmChanges}>
-        <Text style={styles.buttonText}>Confirm Changes</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 };
