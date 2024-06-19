@@ -3,32 +3,41 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { firebase } from '../firebase';
 
 const ViewActivity = () => {
-  const [status, setStatus] = useState([]);
+  const [activity, setActivity] = useState([]);
 
   useEffect(() => {
-    const fetchStatus = async () => {
+    const fetchActivity = async () => {
       try {
-        const statusSnapshot = await firebase.firestore().collection('exam-hall-stats').get();
-        const statusList = statusSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setStatus(statusList);
+        const activitySnapshot = await firebase.firestore().collection('login-activity').orderBy('timestamp', 'desc').limit(10).get();
+        const activityList = activitySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setActivity(activityList);
       } catch (error) {
         console.error("Unable to fetch activity: ", error);
       }
     };
 
-    fetchStatus();
+    fetchActivity();
   }, []);
+
+  // Function to format timestamp from Firestore
+  const formatTimestamp = timestamp => {
+    // Check if timestamp exists and is a valid Firestore timestamp
+    if (timestamp && timestamp.seconds) {
+      return new Date(timestamp.seconds * 1000).toLocaleString();
+    } else {
+      return "Invalid Date";
+    }
+  };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Recent Login Activity</Text>
       <FlatList
-        data={status}
+        data={activity}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.courseItem}>
-              <Text>
-              {item.invigilatorEmail} uploaded attendance for {item.course} in {item.department} on {new Date(item.creation_date.seconds * 1000).toLocaleString()}
-            </Text>
+          <View style={styles.activityItem}>
+            <Text>{item.email} logged in at {formatTimestamp(item.timestamp)}</Text>
           </View>
         )}
       />
@@ -46,7 +55,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  courseItem: {
+  activityItem: {
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',

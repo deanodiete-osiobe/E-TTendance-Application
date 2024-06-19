@@ -26,7 +26,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 const screenWidth = Dimensions.get("window").width;
 
-const ViewAttendaceData = () => {
+const ViewAttendanceData = () => {
   const navigation = useNavigation();
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,20 +113,32 @@ const ViewAttendaceData = () => {
         let absenteeCount = 0;
         let defaulterCount = 0;
         let physicalStudentCount = 0;
+        let sickstudentCount = 0;
+        let studentsWithClashingCoursesCount = 0;
+
+
 
         statsSnapshot.docs.forEach((stat) => {
           absenteeCount = stat.data().absenteeCount ? parseInt(stat.data().absenteeCount) : 0;
           defaulterCount = stat.data().defaulterCount ? parseInt(stat.data().defaulterCount) : 0;
+          sickstudentCount = stat.data().sickstudentCount ? parseInt(stat.data().sickstudentCount) : 0;
+          studentsWithClashingCoursesCount = stat.data().studentsWithClashingCoursesCount ? parseInt(stat.data().studentsWithClashingCoursesCount) : 0;
           physicalStudentCount = parseInt(stat.data().physicalStudentCount);
         });
 
         const othersCount = physicalStudentCount - absenteeCount - defaulterCount;
 
+
         const chartData = [
           { name: 'Absentees', population: absenteeCount, color: 'rgba(131, 167, 234, 1)', legendFontColor: '#7F7F7F', legendFontSize: 15 },
           { name: 'Defaulters', population: defaulterCount, color: '#F00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-          { name: 'Others', population: othersCount, color: 'rgb(0, 255, 0)', legendFontColor: '#7F7F7F', legendFontSize: 15 }
+          { name: 'Approved', population: othersCount, color: '#65FF00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+          { name: 'Sick students', population: sickstudentCount, color: '#0318fc', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+          { name: 'With clashing courses', population: studentsWithClashingCoursesCount, color: '#FF9900', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+        
         ];
+
+        
         console.log("Chart", chartData)
 
         setPieData(chartData);
@@ -259,7 +271,7 @@ const ViewAttendaceData = () => {
       )
 }
       <TouchableOpacity style={styles.button} onPress={fetchExamHallStats}>
-        {loadingStats==true?<ActivityIndicator size="large" color="#fff" />:<Text style={styles.buttonText}>Fetch Exam Hall Stats</Text>}
+        {loadingStats==true?<ActivityIndicator size="large" color="#fff" />:<Text style={styles.buttonText}>Fetch Exam Hall Data</Text>}
       </TouchableOpacity>
       {
         error == "No matching document found" &&(
@@ -275,7 +287,7 @@ const ViewAttendaceData = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 25,
     backgroundColor: "#fff",
     
   },
@@ -287,11 +299,11 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: 5,
     textAlign: "center",
   },
   chart: {
-    marginVertical: 10,
+    marginVertical: 5,
     borderRadius: 16,
   },
   inputContainer: {
@@ -309,7 +321,7 @@ const styles = StyleSheet.create({
   input: {
     borderBottomWidth: 1,
     borderColor: lightGray,
-    padding: 15,
+    padding: 20,
     fontSize: 14,
     backgroundColor: '#f2f2f2',
     width: screenWidth-180
@@ -352,4 +364,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewAttendaceData;
+export default ViewAttendanceData;

@@ -29,6 +29,9 @@ const UserDashboard = () => {
   const [isDefaultersChecked, setIsDefaultersChecked] = useState(false);
   const [absenteeCount, setAbsenteeCount] = useState("");
   const [defaulterCount, setDefaulterCount] = useState("");
+  const [sickstudentCount, setSickstudentCount] = useState("");
+  const [clashingCoursesCount, setClashingCoursesCount] = useState("");
+
   const [defaulters, setDefaulters] = useState([
     { matric: "", firstName: "", surname: "" },
   ]);
@@ -52,6 +55,8 @@ const UserDashboard = () => {
   const [studentsWithClashingCourses, setStudentsWithClashingCourses] =
     useState(null);
   const [studentFellSick, setStudentFellSick] = useState(null);
+
+
   // const [adequateInvigilators, setAdequateInvigilators] = useState(null);
   // const [delayEncountered, setDelayEncountered] = useState(null);
   const [examMonitoringTeamVisited, setExamMonitoringTeamVisited] =
@@ -128,6 +133,7 @@ const UserDashboard = () => {
     examVenue,
     isAbsenteesChecked,
     absenteeCount,
+    sickstudentCount,
     isDefaultersChecked,
     defaulterCount,
     defaulters,
@@ -168,6 +174,10 @@ const UserDashboard = () => {
   const handleDefaulterCountChange = (value) => {
     const count = parseInt(value) || 0;
     setDefaulterCount(count);
+
+
+
+
 
     // Initialize or trim the defaulters array based on count
     const newDefaulters = [...defaulters];
@@ -289,8 +299,7 @@ const UserDashboard = () => {
           </View>
           <View style={styles.inputContainer}>
             {isAbsenteesChecked && (
-              
-              
+          
               <TextInput
                 style={styles.input}
                 value={String(absenteeCount)}
@@ -353,11 +362,52 @@ const UserDashboard = () => {
             </View>
           ))}
 
-          {/* New Questions with Radio Buttons */}
 
+          {/* New Questions with Radio Buttons */}
+          
+          <View style={styles.inputContainer}>
+      <Text style={styles.label}>Did any student fall sick during the exam?</Text>
+      <RadioButton.Group
+        onValueChange={(newValue) => setStudentFellSick(newValue)}
+        value={studentFellSick}
+      >
+        <View style={styles.radioContainer}>
+          <View style={styles.radioButton}>
+            <RadioButton value="yes" />
+            <Text>Yes</Text>
+          </View>
+          <View style={styles.radioButton}>
+            <RadioButton value="no" />
+            <Text>No</Text>
+          </View>
+        </View>
+      </RadioButton.Group>
+    </View>
+    {studentFellSick === 'yes' && (
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Number of sick students</Text>
+        <TextInput
+          style={styles.input}
+          value={sickstudentCount}
+          onChangeText={setSickstudentCount}
+          keyboardType="numeric"
+          placeholder="Enter number of sick students"
+        />
+      </View>
+    )}
+        </ScrollView>
+
+
+      )}
+
+
+
+
+      {currentPage === 3 && (
+        <>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              Did any student fall sick during the exam?
+              Were there students with clashing course(s)?
             </Text>
             <RadioButton.Group
               onValueChange={(newValue) =>
@@ -377,31 +427,24 @@ const UserDashboard = () => {
               </View>
             </RadioButton.Group>
           </View>
-        </ScrollView>
-      )}
 
-      {currentPage === 3 && (
-        <>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Were there students with clashing course(s)?
-            </Text>
-            <RadioButton.Group
-              onValueChange={(newValue) => setStudentFellSick(newValue)}
-              value={studentFellSick}
-            >
-              <View style={styles.radioContainer}>
-                <View style={styles.radioButton}>
-                  <RadioButton value="yes" />
-                  <Text>Yes</Text>
-                </View>
-                <View style={styles.radioButton}>
-                  <RadioButton value="no" />
-                  <Text>No</Text>
-                </View>
-              </View>
-            </RadioButton.Group>
-          </View>
+          {studentsWithClashingCourses === 'yes' && (
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Number of students with clashing courses</Text>
+        <TextInput
+          style={styles.input}
+          value={clashingCoursesCount}
+          onChangeText={setClashingCoursesCount}
+          keyboardType="numeric"
+          placeholder="Enter number of students with clashing courses"
+        />
+      </View>
+    )}
+
+
+
+
+
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
@@ -569,7 +612,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginVertical: 8,
-    height: 60,
+    height: 80,
     backgroundColor: "white",
     borderRadius: 12,
     paddingHorizontal: 12,
@@ -578,14 +621,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   placeholderStyle: {
-    fontSize: 20,
+    fontSize: 16, // Adjusted font size to 16
   },
   selectedTextStyle: {
-    fontSize: 20,
+    fontSize: 16, // Adjusted font size to 16
   },
   inputSearchStyle: {
-    height: 50,
-    fontSize: 20,
+    height: 40, // Adjusted height to 40
+    fontSize: 16, // Adjusted font size to 16
   },
   checkboxContainer: {
     flexDirection: "row",

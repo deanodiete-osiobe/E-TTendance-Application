@@ -21,23 +21,16 @@ const SupervisorDashboard = () => {
   };
 
 
-  const handleLogout = async() => {
+  const ExportToSheets = () => {
+    //Logic to navigate to export
 
-    //clear user credentials
-    firebase.auth().signOut().then(() => {
-        console.log("User signed out");
-        navigation.navigate('Login');
-
-      }).catch((error) => {
-        console.error("Error signing out: ", error);
-      });
+    navigation.navigate('ExportToSheets');
+  };
 
     
 
 
 
-    
-};
 
   return (
     <View style={styles.container}>
@@ -51,9 +44,9 @@ const SupervisorDashboard = () => {
         <Text style={styles.buttonText}>View Absentee and Defaulters</Text>
       </TouchableOpacity>
 
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
+      {/* Export to Sheets Button */}
+      <TouchableOpacity style={styles.button} onPress={ExportToSheets}>
+        <Text style={styles.buttonText}>Export To Sheets</Text>
       </TouchableOpacity>
     </View>
   );

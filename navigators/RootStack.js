@@ -27,6 +27,7 @@ import ManageDepartments from '../screens/ManageDepartments';
 import ViewActivity from '../screens/ViewActivity';
 import ViewAttendanceData from '../screens/ViewAttendanceData';
 import ViewAbsenteeAndDefaulterData from '../screens/ViewAbsenteeAndDefaulters';
+import AttendanceConfirmation2 from '../screens/AttendanceConfirmation2';
 
 
 
@@ -119,6 +120,23 @@ const RootStack = () => {
             },
           }}
         />
+
+
+<Stack.Screen
+          name="AttendanceConfirmation2"
+          component={AttendanceConfirmation2}
+          options={{
+            headerTitle: 'Confirmation',
+            headerStyle: {
+              height: 100,
+              backgroundColor: accent,
+              borderBottomWidth: 0,
+              shadowOpacity: 0,
+              elevation: 0,
+            },
+          }}
+        />
+
         <Stack.Screen
           name="VerificationFailed"
           component={VerificationFailed}
