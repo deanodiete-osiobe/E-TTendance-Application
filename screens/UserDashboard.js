@@ -144,6 +144,7 @@ const UserDashboard = () => {
     studentFellSick,
     // adequateInvigilators,
     // delayEncountered,
+    clashingCoursesCount,
     examMonitoringTeamVisited,
     physicalStudentCount,
     lightingBrightEnough,

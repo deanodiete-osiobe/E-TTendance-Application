@@ -14,7 +14,11 @@ const AttendanceConfirmation2 = () => {
 
   const handleConfirm = async () => {
     try {
-      await firebase.firestore().collection('exam-hall-stats').add(examData);
+      const updatedExamData = {
+        ...examData,
+        uploaded_at: new Date().toISOString()
+      };
+      await firebase.firestore().collection('exam-hall-stats').add(updatedExamData);
       console.log('Data submitted successfully');
       console.log(examData);
       setUploadSuccessful(true);

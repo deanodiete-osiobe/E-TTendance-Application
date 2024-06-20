@@ -8,7 +8,7 @@ const ViewActivity = () => {
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const activitySnapshot = await firebase.firestore().collection('login-activity').orderBy('timestamp', 'desc').limit(10).get();
+        const activitySnapshot = await firebase.firestore().collection('exam-hall-stats').orderBy('uploaded_at', 'desc').limit(10).get();
         const activityList = activitySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setActivity(activityList);
       } catch (error) {
@@ -20,24 +20,30 @@ const ViewActivity = () => {
   }, []);
 
   // Function to format timestamp from Firestore
-  const formatTimestamp = timestamp => {
-    // Check if timestamp exists and is a valid Firestore timestamp
-    if (timestamp && timestamp.seconds) {
-      return new Date(timestamp.seconds * 1000).toLocaleString();
-    } else {
-      return "Invalid Date";
-    }
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+      weekday: 'long', // "Monday"
+      year: 'numeric', // "2021"
+      month: 'long', // "January"
+      day: 'numeric', // "1"
+      hour: '2-digit', // "01"
+      minute: '2-digit', // "30"
+      second: '2-digit', // "15"
+      hour12: true // "AM/PM"
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recent Login Activity</Text>
+      <Text style={styles.title}>Recent User Activity</Text>
       <FlatList
         data={activity}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.activityItem}>
-            <Text>{item.email} logged in at {formatTimestamp(item.timestamp)}</Text>
+            <Text style={{fontWeight: 'bold'}}>{formatDate(item.uploaded_at)}</Text>
+            <Text>{item.invigilatorEmail} uploaded attendance for {item.course} in exam venue {item.examVenue}</Text>
           </View>
         )}
       />

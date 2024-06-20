@@ -98,7 +98,7 @@ const ViewAttendanceData = () => {
         .collection("exam-hall-stats")
         .where("course", "==", course)
         .where("department", "==", department)
-        .where("date", "==", dateString) // Added date as query parameter
+        .where("date", "==", dateString)
         .get();
 
       if (!statsSnapshot.empty) {
@@ -122,11 +122,11 @@ const ViewAttendanceData = () => {
           absenteeCount = stat.data().absenteeCount ? parseInt(stat.data().absenteeCount) : 0;
           defaulterCount = stat.data().defaulterCount ? parseInt(stat.data().defaulterCount) : 0;
           sickstudentCount = stat.data().sickstudentCount ? parseInt(stat.data().sickstudentCount) : 0;
-          studentsWithClashingCoursesCount = stat.data().studentsWithClashingCoursesCount ? parseInt(stat.data().studentsWithClashingCoursesCount) : 0;
+          studentsWithClashingCoursesCount = stat.data().clashingCoursesCount ? parseInt(stat.data().clashingCoursesCount) : 0;
           physicalStudentCount = parseInt(stat.data().physicalStudentCount);
         });
 
-        const othersCount = physicalStudentCount - absenteeCount - defaulterCount;
+        const othersCount = physicalStudentCount - absenteeCount - defaulterCount - studentsWithClashingCoursesCount;
 
 
         const chartData = [
@@ -134,7 +134,7 @@ const ViewAttendanceData = () => {
           { name: 'Defaulters', population: defaulterCount, color: '#F00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
           { name: 'Approved', population: othersCount, color: '#65FF00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
           { name: 'Sick students', population: sickstudentCount, color: '#0318fc', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-          { name: 'With clashing courses', population: studentsWithClashingCoursesCount, color: '#FF9900', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+          { name: 'With clashing courses', population: studentsWithClashingCoursesCount, color: '#FF9900', legendFontColor: '#7F7F7F', legendFontSize: 8 },
         
         ];
 
@@ -180,11 +180,10 @@ const ViewAttendanceData = () => {
         <PieChart
         data={pieData}
         width={screenWidth}
-        height={220}
+        height={150}
         chartConfig={chartConfig}
         accessor="population"
         backgroundColor="transparent"
-        paddingLeft="15"
         absolute
       />
       )}
@@ -236,7 +235,7 @@ const ViewAttendanceData = () => {
         <TextInput
           style={styles.input}
           value={dateString}
-          onFocus={() => setShow(true)}
+          onPressIn={() => setShow(true)}
           placeholder="Select Exam Date"
         />
       </View>
