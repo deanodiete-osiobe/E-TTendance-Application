@@ -40,7 +40,7 @@ const Login = ({ navigation }) => {
       else if (email.endsWith('@spv.cu.edu.ng')) {
         moveTo('SupervisorDashboard', { supervisorEmail: user.email });
       }
-      else if (email.endsWith('@cu.edu.ng')) {
+      else if (email.endsWith('@cumt.cu.edu.ng')) {
         moveTo('UserDashboard', { invigilatorEmail: user.email });
       } else {
         setMessage('Unauthorized email domain');
@@ -48,7 +48,7 @@ const Login = ({ navigation }) => {
 
       setSubmitting(false);
     } catch (error) {
-      setMessage('Login failed');
+      setMessage('Login failed. Check your credentials and try again.');
       setSubmitting(false);
     }
   };
@@ -56,7 +56,7 @@ const Login = ({ navigation }) => {
   const loginValidationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
-      .matches(/(@cu\.edu\.ng|@admin\.cu\.edu\.ng|@spv\.cu\.edu\.ng)$/, 'You have to use an official email')
+      .matches(/(@cumt\.cu\.edu\.ng|@admin\.cu\.edu\.ng|@spv\.cu\.edu\.ng)$/, 'Invalid email address.')
       .required('Email is required'),
     password: Yup.string().required('Password is required'),
   });
