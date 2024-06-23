@@ -21,9 +21,9 @@ import SupervisorDashboard from '../screens/SupervisorDashboard';
 import AttendanceConfirmation from '../screens/AttendanceConfirmation';
 import VerificationSuccessful from '../screens/VerificationSuccessful';
 import VerificationFailed from '../screens/VerificationFailed';
-import ManageUsers from '../screens/ManageUsers';
 import ManageCourses from '../screens/ManageCourses';
 import ManageDepartments from '../screens/ManageDepartments';
+import ManageVenues from '../screens/ManageVenues';
 import ViewActivity from '../screens/ViewActivity';
 import ViewAttendanceData from '../screens/ViewAttendanceData';
 import ViewAbsenteeAndDefaulterData from '../screens/ViewAbsenteeAndDefaulters';
@@ -167,10 +167,10 @@ const RootStack = () => {
           }}
         />
         <Stack.Screen
-          name="ManageUsers"
-          component={ManageUsers}
+          name="ManageVenues"
+          component={ManageVenues}
           options={{
-            headerTitle: 'Manage Users',
+            headerTitle: 'Manage Exam Venues',
             headerStyle: {
               height: 100,
               backgroundColor: accent,

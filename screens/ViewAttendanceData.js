@@ -7,27 +7,26 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { firebase } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { PieChart } from "react-native-chart-kit";
 import { colors } from "../components/colors";
 import { Dropdown } from "react-native-element-dropdown";
-const { primary, lightGray, accent } = colors;
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+const { primary, lightGray, accent } = colors;
 const screenWidth = Dimensions.get("window").width;
+
+
 
 const ViewAttendanceData = () => {
   const navigation = useNavigation();
+  const viewAbsentAndDefaulterStudents = () => {
+    // Logic to navigate to view Absentee screen
+    navigation.navigate('ViewAbsenteeAndDefaulterData',{stats});
+  };
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingStats, setLoadingStats] = useState(false);
@@ -40,7 +39,6 @@ const ViewAttendanceData = () => {
   const [examVenue, setExamVenue] = useState("");
   const [error, setError] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-
   const [courseData, setCourseData] = useState([]);
   const [departmentData, setDepartmentData] = useState([]);
   const [pieData, setPieData] = useState([]);
@@ -116,8 +114,6 @@ const ViewAttendanceData = () => {
         let sickstudentCount = 0;
         let studentsWithClashingCoursesCount = 0;
 
-
-
         statsSnapshot.docs.forEach((stat) => {
           absenteeCount = stat.data().absenteeCount ? parseInt(stat.data().absenteeCount) : 0;
           defaulterCount = stat.data().defaulterCount ? parseInt(stat.data().defaulterCount) : 0;
@@ -126,21 +122,17 @@ const ViewAttendanceData = () => {
           physicalStudentCount = parseInt(stat.data().physicalStudentCount);
         });
 
-        const othersCount = physicalStudentCount - absenteeCount - defaulterCount - studentsWithClashingCoursesCount;
-
+        const othersCount = physicalStudentCount - absenteeCount - defaulterCount - sickstudentCount - studentsWithClashingCoursesCount;
 
         const chartData = [
           { name: 'Absentees', population: absenteeCount, color: 'rgba(131, 167, 234, 1)', legendFontColor: '#7F7F7F', legendFontSize: 15 },
           { name: 'Defaulters', population: defaulterCount, color: '#F00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-          { name: 'Approved', population: othersCount, color: '#65FF00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+          { name: 'Writing exam', population: othersCount, color: '#65FF00', legendFontColor: '#7F7F7F', legendFontSize: 15 },
           { name: 'Sick students', population: sickstudentCount, color: '#0318fc', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-          { name: 'With clashing courses', population: studentsWithClashingCoursesCount, color: '#FF9900', legendFontColor: '#7F7F7F', legendFontSize: 8 },
-        
+          { name: 'Clashing', population: studentsWithClashingCoursesCount, color: '#FF9900', legendFontColor: '#7F7F7F', legendFontSize: 15 },
         ];
 
-        
         console.log("Chart", chartData)
-
         setPieData(chartData);
         setError(null)
       } else {
@@ -162,12 +154,11 @@ const ViewAttendanceData = () => {
     );
   }
 
-
   const chartConfig = {
     backgroundColor: "#e26a00",
     backgroundGradientFrom: "#fff",
     backgroundGradientTo: "#fff",
-    decimalPlaces: 2, // optional, defaults to 2dp
+    decimalPlaces: 2,
     color: (opacity = 1) => `rgba(1, 1, 1, ${opacity})`,
     style: {
       borderRadius: 16,
@@ -175,110 +166,124 @@ const ViewAttendanceData = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{alignItems:"center"}} >
-      {stats.length!=0&&(  
+    <ScrollView style={styles.container} contentContainerStyle={{ alignItems: "center" }}>
+      {stats.length !== 0 && (
         <PieChart
-        data={pieData}
-        width={screenWidth}
-        height={150}
-        chartConfig={chartConfig}
-        accessor="population"
-        backgroundColor="transparent"
-        absolute
-      />
-      )}
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Course</Text>
-        <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: accent }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          placeholder="Select Course"
-          labelField="label"
-          valueField="label"
-          data={courseData}
-          isFocus={isFocus}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={(item) => {
-            setCourse(item.label);
-            setIsFocus(false);
-          }}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Department</Text>
-        <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: accent }]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          placeholder="Select Department"
-          labelField="label"
-          valueField="label"
-          data={departmentData}
-          isFocus={isFocus}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={(item) => {
-            setDepartment(item.label);
-            setIsFocus(false);
-          }}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Exam Date</Text>
-        <TextInput
-          style={styles.input}
-          value={dateString}
-          onPressIn={() => setShow(true)}
-          placeholder="Select Exam Date"
-        />
-      </View>
-      {show && (
-        <DateTimePicker
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-          headerTextContainerStyle={{ backgroundColor: accent }}
-          style={styles.dateTimePicker}
+          data={pieData}
+          width={screenWidth}
+          height={250} // Increased height
+          chartConfig={chartConfig}
+          accessor="population"
+          backgroundColor="transparent"
+          absolute
+          style={styles.chart}
         />
       )}
 
-      {stats.length!=0&&(<>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Exam Time</Text>
-        <Text style={styles.input}>{timeString}</Text>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Exam Venue</Text>
-        <Text style={styles.input}>{examVenue}</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Invigilator Email</Text>
-        <Text style={styles.input}>{invigilatorEmail}</Text>
+      <View style={styles.formContainer}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Course</Text>
+          <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: accent }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            placeholder="Select Course"
+            labelField="label"
+            valueField="label"
+            data={courseData}
+            isFocus={isFocus}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={(item) => {
+              setCourse(item.label);
+              setIsFocus(false);
+            }}
+          />
         </View>
-        </>
-      )
-}
-      <TouchableOpacity style={styles.button} onPress={fetchExamHallStats}>
-        {loadingStats==true?<ActivityIndicator size="large" color="#fff" />:<Text style={styles.buttonText}>Fetch Exam Hall Data</Text>}
-      </TouchableOpacity>
-      {
-        error == "No matching document found" &&(
-          <Text style={{color: "red"}}>No Data Found</Text>
-        )
-      }
 
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Department</Text>
+          <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: accent }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            placeholder="Select Department"
+            labelField="label"
+            valueField="label"
+            data={departmentData}
+            isFocus={isFocus}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={(item) => {
+              setDepartment(item.label);
+              setIsFocus(false);
+            }}
+          />
+        </View>
 
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Exam Date</Text>
+          <TextInput
+            style={styles.input}
+            value={dateString}
+            onPressIn={() => setShow(true)}
+            placeholder="Select Exam Date"
+          />
+        </View>
+
+        {show && (
+          <DateTimePicker
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+            headerTextContainerStyle={{ backgroundColor: accent }}
+            style={styles.dateTimePicker}
+          />
+        )}
+
+        {stats.length !== 0 && (
+          <>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Exam Time</Text>
+              <Text style={styles.input}>{timeString}</Text>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Exam Venue</Text>
+              <Text style={styles.input}>{examVenue}</Text>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Invigilator Email</Text>
+              <Text style={styles.input}>{invigilatorEmail}</Text>
+            </View>
+          </>
+        )}
+
+        <TouchableOpacity style={styles.button} onPress={fetchExamHallStats}>
+          {loadingStats ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Fetch Exam Hall Data</Text>
+          )}
+        </TouchableOpacity>
+
+        {error === "No matching document found" && (
+          <Text style={{ color: "red" }}>No Data Found</Text>
+        )}
+         {stats.length !== 0 && (
+        <TouchableOpacity style={styles.button} onPress={viewAbsentAndDefaulterStudents}>
+          
+       
+            <Text style={styles.buttonText}>View Absentees and Defaulters</Text>
+  
+        </TouchableOpacity>
+         )}
+      </View>
     </ScrollView>
   );
 };
@@ -286,23 +291,21 @@ const ViewAttendanceData = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
     backgroundColor: "#fff",
-    
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  chartTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 5,
-    textAlign: "center",
+  formContainer: {
+    padding: 25,
+    marginTop: 20,
+    width: '100%',
+    alignItems: "center",
   },
   chart: {
-    marginVertical: 5,
+    marginVertical: 10,
     borderRadius: 16,
   },
   inputContainer: {

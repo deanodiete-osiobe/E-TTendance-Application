@@ -5,9 +5,9 @@ import { colors } from '../components/colors';
 const { primary, accent } = colors;
 
 const AdminDashboard = () => {
-  const handleManageUsers = () => {
-    // Logic to navigate to manage users screen
-    navigation.navigate('ManageUsers');
+  const handleManageVenues = () => {
+    // Logic to navigate to manage venues screen
+    navigation.navigate('ManageVenues');
   };
 
   const handleManageCourses = () => {
@@ -29,11 +29,7 @@ const AdminDashboard = () => {
 
   return (
     <View style={styles.container}>
-      {/* Manage Users Button */}
-      {/* <TouchableOpacity style={styles.button} onPress={handleManageUsers}>
-        <Text style={styles.buttonText}>Manage Users</Text>
-      </TouchableOpacity> */}
-
+      
       {/* Manage Courses Button */}
       <TouchableOpacity style={styles.button} onPress={handleManageCourses}>
         <Text style={styles.buttonText}>Manage Courses</Text>
@@ -43,6 +39,14 @@ const AdminDashboard = () => {
       <TouchableOpacity style={styles.button} onPress={handleManageDepartments}>
         <Text style={styles.buttonText}>Manage Departments</Text>
       </TouchableOpacity>
+
+
+{/* Manage Venues  Button */}
+      {<TouchableOpacity style={styles.button} onPress={handleManageVenues}>
+        <Text style={styles.buttonText}>Manage Venues</Text>
+      </TouchableOpacity>}
+
+
 
       {/* View Activity Button */}
       <TouchableOpacity style={styles.button} onPress={handleViewActivity}>

@@ -35,38 +35,44 @@ const UserDashboard = () => {
   const [defaulters, setDefaulters] = useState([
     { matric: "", firstName: "", surname: "" },
   ]);
+  const [absentees, setAbsentees] = useState([
+    { matric: "", firstName: "", surname: "" },
+  ]);
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-  const [dateString, setDateString] = useState("");
+  const today = new Date();
+  const dateString = today.toLocaleDateString();
   const [timeString, setTimeString] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;
 
   const [courseData, setCourseData] = useState([]);
   const [departmentData, setDepartmentData] = useState([]);
+  const [venueData, setVenueData] = useState([]);
   const [course, setCourse] = useState("");
   const [department, setDepartment] = useState("");
+  const [venues, setVenues] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
-  // const [examPapersMadeEarly, setExamPapersMadeEarly] = useState(null);
+  const [examPapersMadeEarly, setExamPapersMadeEarly] = useState(null);
   const [studentsWithClashingCourses, setStudentsWithClashingCourses] =
     useState(null);
   const [studentFellSick, setStudentFellSick] = useState(null);
 
-
-  // const [adequateInvigilators, setAdequateInvigilators] = useState(null);
+  const [adequateInvigilators, setAdequateInvigilators] = useState(null);
   // const [delayEncountered, setDelayEncountered] = useState(null);
-  const [examMonitoringTeamVisited, setExamMonitoringTeamVisited] =
-    useState(null);
+  //const [examMonitoringTeamVisited, setExamMonitoringTeamVisited] =
+  useState(null);
   const [physicalStudentCount, setPhysicalStudentCount] = useState("");
   const [lightingBrightEnough, setLightingBrightEnough] = useState(null);
   const [seatsWellSpaced, setSeatsWellSpaced] = useState(null);
   const [examHallClean, setExamHallClean] = useState(null);
   const [generalComment, setGeneralComment] = useState(null);
   const [examVenue, setExamVenue] = useState("");
+  const currentDate = new Date();
 
   const fetchCourseData = async () => {
     try {
@@ -106,13 +112,32 @@ const UserDashboard = () => {
     }
   };
 
+  const fetchVenueData = async () => {
+    try {
+      const venuesSnapshot = await firebase
+        .firestore()
+        .collection("Exam Venues")
+        .get();
+      const venues = venuesSnapshot.docs.map((doc) => ({
+        label: doc.data().venue_name,
+        value: doc.id,
+      }));
+      console.log("sample", venues);
+      setVenueData(venues);
+    } catch (error) {
+      setError("Failed to fetch exam venue data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
 
     if (mode === "date") {
-      setDateString(currentDate.toLocaleDateString());
+      //setDateString(currentDate.toLocaleDateString());
     } else {
       setTimeString(
         currentDate.toLocaleTimeString([], {
@@ -137,20 +162,22 @@ const UserDashboard = () => {
     isDefaultersChecked,
     defaulterCount,
     defaulters,
+    absentees,
     date: dateString,
     time: timeString,
-    // examPapersMadeEarly,
+    examPapersMadeEarly,
     studentsWithClashingCourses,
     studentFellSick,
-    // adequateInvigilators,
+    adequateInvigilators,
     // delayEncountered,
     clashingCoursesCount,
-    examMonitoringTeamVisited,
+    //examMonitoringTeamVisited,
     physicalStudentCount,
     lightingBrightEnough,
     seatsWellSpaced,
     examHallClean,
     generalComment,
+
     invigilatorEmail,
   };
 
@@ -170,15 +197,11 @@ const UserDashboard = () => {
   const handleAbsenteeCountChange = (value) => {
     const count = parseInt(value) || 0;
     setAbsenteeCount(count);
-  }
+  };
 
   const handleDefaulterCountChange = (value) => {
     const count = parseInt(value) || 0;
     setDefaulterCount(count);
-
-
-
-
 
     // Initialize or trim the defaulters array based on count
     const newDefaulters = [...defaulters];
@@ -198,11 +221,19 @@ const UserDashboard = () => {
     setDefaulters(newDefaulters);
   };
 
+  const handleAbsenteeChange = (index, field, value) => {
+    const newAbsentees = [...absentees];
+    newAbsentees[index][field] = value;
+    setAbsentees(newAbsentees);
+  };
+
+
+
   useEffect(() => {
     fetchCourseData();
     fetchDepartmentData();
+    fetchVenueData();
   }, []);
-
   return (
     <View style={styles.container}>
       {currentPage === 1 && (
@@ -259,8 +290,8 @@ const UserDashboard = () => {
             <TextInput
               style={styles.input}
               value={dateString}
-              onFocus={() => showMode("date")}
-              placeholder="Select Exam Date"
+              editable={false}
+              placeholder={dateString}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -279,15 +310,30 @@ const UserDashboard = () => {
         <ScrollView>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Exam Location</Text>
-            <TextInput
-              style={styles.input}
-              value={examVenue}
-              onChangeText={setExamVenue}
-              keyboardType="default"
-              placeholder="Enter Venue"
+
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: accent }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              placeholder="Select Exam Venue"
+              labelField="label"
+              valueField="label"
+              data={venueData}
+              isFocus={isFocus}
+              onFocus={() => {
+                setIsFocus(true);
+              }}
+              onBlur={() => setIsFocus(false)}
+              onChange={(item) => {
+                setExamVenue(item.label);
+                console.log(item.value);
+                setIsFocus(false);
+              }}
             />
           </View>
-          <View style={styles.checkboxContainer}>
+
+          {/* <View style={styles.checkboxContainer}>
             <View style={styles.checkboxGroup}>
               <CheckBox
                 style={styles.checkbox}
@@ -297,10 +343,28 @@ const UserDashboard = () => {
               />
               <Text style={styles.checkboxLabel}>Any absentees?</Text>
             </View>
-          </View>
+          </View> */}
           <View style={styles.inputContainer}>
-            {isAbsenteesChecked && (
-          
+            <Text style={styles.label}>Any absentees?</Text>
+            <RadioButton.Group
+              onValueChange={(newValue) => setIsAbsenteesChecked(newValue)}
+              value={isAbsenteesChecked}
+            >
+              <View style={styles.radioContainer}>
+                <View style={styles.radioButton}>
+                  <RadioButton value="yes" color={accent} />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButton}>
+                  <RadioButton value="no" color={accent} />
+                  <Text>No</Text>
+                </View>
+              </View>
+            </RadioButton.Group>
+          </View>
+
+          <View style={styles.inputContainer}>
+            {isAbsenteesChecked == "yes" && (
               <TextInput
                 style={styles.input}
                 value={String(absenteeCount)}
@@ -308,22 +372,64 @@ const UserDashboard = () => {
                 keyboardType="numeric"
                 placeholder="Enter number of absentees"
               />
-              
             )}
           </View>
-          <View style={styles.checkboxContainer}>
-            <View style={styles.checkboxGroup}>
-              <CheckBox
-                style={styles.checkbox}
-                onClick={() => setIsDefaultersChecked(!isDefaultersChecked)}
-                isChecked={isDefaultersChecked}
-                checkBoxColor={accent}
-              />
-              <Text style={styles.checkboxLabel}>Any defaulters?</Text>
-            </View>
-          </View>
+
+          {absenteeCount > 0 &&
+            isAbsenteesChecked == "yes" &&
+            absentees.map((absentees, index) => (
+              <View key={index} style={styles.inputContainer}>
+                <Text style={{ fontWeight: "bold" }}>
+                  Absentee No. {index + 1}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={absentees.matric}
+                  onChangeText={(value) =>
+                    handleAbsenteeChange(index, "matric", value)
+                  }
+                  placeholder="Matric Number"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={absentees.firstName}
+                  onChangeText={(value) =>
+                    handleAbsenteeChange(index, "firstName", value)
+                  }
+                  placeholder="First Name"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={absentees.surname}
+                  onChangeText={(value) =>
+                    handleAbsenteeChange(index, "surname", value)
+                  }
+                  placeholder="Surname"
+                />
+              </View>
+            ))}
+
           <View style={styles.inputContainer}>
-            {isDefaultersChecked && (
+            <Text style={styles.label}>Any defaulters?</Text>
+            <RadioButton.Group
+              onValueChange={(newValue) => setIsDefaultersChecked(newValue)}
+              value={isDefaultersChecked}
+            >
+              <View style={styles.radioContainer}>
+                <View style={styles.radioButton}>
+                  <RadioButton value="yes" color={accent} />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButton}>
+                  <RadioButton value="no" color={accent} />
+                  <Text>No</Text>
+                </View>
+              </View>
+            </RadioButton.Group>
+          </View>
+
+          <View style={styles.inputContainer}>
+            {isDefaultersChecked === "yes" && (
               <TextInput
                 style={styles.input}
                 value={String(defaulterCount)}
@@ -333,76 +439,97 @@ const UserDashboard = () => {
               />
             )}
           </View>
-          {defaulterCount>0 && defaulters.map((defaulter, index) => (
-            <View key={index} style={styles.inputContainer}>
-              <Text style={{ fontWeight: 'bold' }}>Defaulter No. {index+1}</Text>
-              <TextInput
-              style={styles.input}
-                value={defaulter.matric}
-                onChangeText={(value) =>
-                  handleDefaulterChange(index, "matric", value)
-                }
-                placeholder="Matric Number"
-              />
-              <TextInput
-                style={styles.input}
-                value={defaulter.firstName}
-                onChangeText={(value) =>
-                  handleDefaulterChange(index, "firstName", value)
-                }
-                placeholder="First Name"
-              />
-              <TextInput
-                style={styles.input}
-                value={defaulter.surname}
-                onChangeText={(value) =>
-                  handleDefaulterChange(index, "surname", value)
-                }
-                placeholder="Surname"
-              />
-            </View>
-          ))}
 
+          {defaulterCount > 0 &&
+            isDefaultersChecked === "yes" &&
+            defaulters.map((defaulter, index) => (
+              <View key={index} style={styles.inputContainer}>
+                <Text style={{ fontWeight: "bold" }}>
+                  Defaulter No. {index + 1}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={defaulter.matric}
+                  onChangeText={(value) =>
+                    handleDefaulterChange(index, "matric", value)
+                  }
+                  placeholder="Matric Number"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={defaulter.firstName}
+                  onChangeText={(value) =>
+                    handleDefaulterChange(index, "firstName", value)
+                  }
+                  placeholder="First Name"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={defaulter.surname}
+                  onChangeText={(value) =>
+                    handleDefaulterChange(index, "surname", value)
+                  }
+                  placeholder="Surname"
+                />
+              </View>
+            ))}
 
           {/* New Questions with Radio Buttons */}
-          
           <View style={styles.inputContainer}>
-      <Text style={styles.label}>Did any student fall sick during the exam?</Text>
-      <RadioButton.Group
-        onValueChange={(newValue) => setStudentFellSick(newValue)}
-        value={studentFellSick}
-      >
-        <View style={styles.radioContainer}>
-          <View style={styles.radioButton}>
-            <RadioButton value="yes" />
-            <Text>Yes</Text>
+            <Text style={styles.label}>
+              Were exam papers made available early enough?
+            </Text>
+            <RadioButton.Group
+              onValueChange={(newValue) => setExamPapersMadeEarly(newValue)}
+              value={examPapersMadeEarly}
+            >
+              <View style={styles.radioContainer}>
+                <View style={styles.radioButton}>
+                  <RadioButton value="yes" />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButton}>
+                  <RadioButton value="no" />
+                  <Text>No</Text>
+                </View>
+              </View>
+            </RadioButton.Group>
           </View>
-          <View style={styles.radioButton}>
-            <RadioButton value="no" />
-            <Text>No</Text>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>
+              Did any student fall sick during the exam?
+            </Text>
+            <RadioButton.Group
+              onValueChange={(newValue) => setStudentFellSick(newValue)}
+              value={studentFellSick}
+            >
+              <View style={styles.radioContainer}>
+                <View style={styles.radioButton}>
+                  <RadioButton value="yes" />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButton}>
+                  <RadioButton value="no" />
+                  <Text>No</Text>
+                </View>
+              </View>
+            </RadioButton.Group>
           </View>
-        </View>
-      </RadioButton.Group>
-    </View>
-    {studentFellSick === 'yes' && (
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Number of sick students</Text>
-        <TextInput
-          style={styles.input}
-          value={sickstudentCount}
-          onChangeText={setSickstudentCount}
-          keyboardType="numeric"
-          placeholder="Enter number of sick students"
-        />
-      </View>
-    )}
+          {studentFellSick === "yes" && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Number of sick students</Text>
+              <TextInput
+                style={styles.input}
+                value={sickstudentCount}
+                onChangeText={setSickstudentCount}
+                keyboardType="numeric"
+                placeholder="Enter number of sick students"
+              />
+            </View>
+          )}
         </ScrollView>
-
-
       )}
-
-
-
 
       {currentPage === 3 && (
         <>
@@ -429,33 +556,28 @@ const UserDashboard = () => {
             </RadioButton.Group>
           </View>
 
-          {studentsWithClashingCourses === 'yes' && (
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Number of students with clashing courses</Text>
-        <TextInput
-          style={styles.input}
-          value={clashingCoursesCount}
-          onChangeText={setClashingCoursesCount}
-          keyboardType="numeric"
-          placeholder="Enter number of students with clashing courses"
-        />
-      </View>
-    )}
-
-
-
-
-
+          {studentsWithClashingCourses === "yes" && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Number of students with clashing courses
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={clashingCoursesCount}
+                onChangeText={setClashingCoursesCount}
+                keyboardType="numeric"
+                placeholder="Enter number of students with clashing courses"
+              />
+            </View>
+          )}
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>
-              Did the exam monitoring team visit the hall?
+              Were the number of invigilators allocated to the hall adequate?
             </Text>
             <RadioButton.Group
-              onValueChange={(newValue) =>
-                setExamMonitoringTeamVisited(newValue)
-              }
-              value={examMonitoringTeamVisited}
+              onValueChange={(newValue) => setAdequateInvigilators(newValue)}
+              value={adequateInvigilators}
             >
               <View style={styles.radioContainer}>
                 <View style={styles.radioButton}>

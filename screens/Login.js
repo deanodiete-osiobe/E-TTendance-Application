@@ -118,7 +118,6 @@ const Login = ({ navigation }) => {
               )}
 
               <RowContainer>
-                <PressableText onPress={() => { moveTo('Signup') }}>New account? Sign up</PressableText>
                 <PressableText onPress={() => { moveTo('ForgotPassword') }}>Forgot Password</PressableText>
               </RowContainer>
             </>
@@ -139,6 +138,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'red',
     marginBottom: 15,
+  },
+  RowContainer: {
+    position: 'absolute',
   },
 });
 

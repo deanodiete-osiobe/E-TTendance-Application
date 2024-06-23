@@ -39,6 +39,18 @@ const AttendanceConfirmation = () => {
                   </View>
                 ))}
               </View>
+            ) : item[0] === 'absentees' ? (
+              <View style={styles.absenteeContainer}>
+                <Text style={styles.itemKey}>{formatString(item[0]) + ':'}</Text>
+                {item[1].length > 0 && item[1].map((absentee, index) => (
+                  <View key={index} style={styles.absenteeDetails}>
+                    <Text style={{ color: 'blue' }}>Absentee No. {index + 1}</Text>
+                    <Text style={styles.itemValue}>Matric Number: {absentee.matric}</Text>
+                    <Text style={styles.itemValue}>First Name: {absentee.firstName}</Text>
+                    <Text style={styles.itemValue}>Surname: {absentee.surname}</Text>
+                  </View>
+                ))}
+              </View>
             ) : (
               <View style={styles.itemContainer}>
                 <Text style={styles.itemKey}>{formatString(item[0]) + ':'}</Text>
@@ -94,10 +106,20 @@ const styles = StyleSheet.create({
   itemValue: {
     flexShrink: 1,
   },
+  defaulterContainer: {
+    marginBottom: 20,
+  },
   defaulterDetails: {
     paddingLeft: 10,
     paddingTop: 5,
-  }
+  },
+  absenteeContainer: {
+    marginBottom: 20,
+  },
+  absenteeDetails: {
+    paddingLeft: 10,
+    paddingTop: 5,
+  },
 });
 
 export default AttendanceConfirmation;

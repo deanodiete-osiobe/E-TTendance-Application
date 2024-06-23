@@ -43,7 +43,7 @@ const ViewActivity = () => {
         renderItem={({ item }) => (
           <View style={styles.activityItem}>
             <Text style={{fontWeight: 'bold'}}>{formatDate(item.uploaded_at)}</Text>
-            <Text>{item.invigilatorEmail} uploaded attendance for {item.course} in exam venue {item.examVenue}</Text>
+            <Text>{item.invigilatorEmail} uploaded attendance for {item.course} in {item.examVenue}</Text>
           </View>
         )}
       />

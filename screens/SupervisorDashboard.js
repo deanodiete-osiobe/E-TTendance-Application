@@ -86,9 +86,9 @@ const SupervisorDashboard = () => {
       </TouchableOpacity>
 
       {/* View Absentee button */}
-      <TouchableOpacity style={styles.button} onPress={viewAbsentAndDefaulterStudents}>
-        <Text style={styles.buttonText}>View Absentee and Defaulters</Text>
-      </TouchableOpacity>
+      {/* <TouchableOpacity style={styles.button} onPress={viewAbsentAndDefaulterStudents}>
+      <Text style={styles.buttonText}>View Absentee and Defaulters</Text>
+      </TouchableOpacity> */}
 
       {/* Export to Sheets Button */}
       <TouchableOpacity style={styles.button} onPress={ExportToSheets}>
