@@ -118,7 +118,7 @@ const Login = ({ navigation }) => {
               )}
 
               <RowContainer>
-                <PressableText onPress={() => { moveTo('ForgotPassword') }}>Forgot Password</PressableText>
+                <PressableText onPress={() => { moveTo('ForgotPassword') }}>Forgot Password?</PressableText>
               </RowContainer>
             </>
           )}

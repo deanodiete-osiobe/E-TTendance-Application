@@ -122,7 +122,7 @@ const ViewAttendanceData = () => {
           physicalStudentCount = parseInt(stat.data().physicalStudentCount);
         });
 
-        const othersCount = physicalStudentCount - absenteeCount - defaulterCount - sickstudentCount - studentsWithClashingCoursesCount;
+        const othersCount = physicalStudentCount - absenteeCount - defaulterCount - sickstudentCount //- studentsWithClashingCoursesCount;
 
         const chartData = [
           { name: 'Absentees', population: absenteeCount, color: 'rgba(131, 167, 234, 1)', legendFontColor: '#7F7F7F', legendFontSize: 15 },
@@ -171,7 +171,7 @@ const ViewAttendanceData = () => {
         <PieChart
           data={pieData}
           width={screenWidth}
-          height={250} // Increased height
+          height={250}  // Increased height
           chartConfig={chartConfig}
           accessor="population"
           backgroundColor="transparent"

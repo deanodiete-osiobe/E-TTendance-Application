@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { firebase } from '../firebase';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from "../components/colors";
-const { primary, lightGray, accent } = colors;
+
+const { accent } = colors;
 const screenWidth = Dimensions.get("window").width;
 
 const ManageCourses = () => {
@@ -22,7 +22,6 @@ const ManageCourses = () => {
         const departmentsSnapshot = await firebase.firestore().collection('Departments').get();
         const departmentList = departmentsSnapshot.docs.map(doc => ({ id: doc.id, label: doc.data().dept_name }));
         setDepartments(departmentList);
-        console.log("dep",departmentList)
       } catch (error) {
         console.error("Error fetching departments: ", error);
       }
@@ -32,8 +31,8 @@ const ManageCourses = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedDepartment) {
-      const fetchCourses = async () => {
+    const fetchCourses = async () => {
+      if (selectedDepartment) {
         try {
           const coursesSnapshot = await firebase.firestore().collection('Courses').where('departmentId', '==', selectedDepartment.id).get();
           const coursesList = coursesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -41,15 +40,17 @@ const ManageCourses = () => {
         } catch (error) {
           console.error("Error fetching courses: ", error);
         }
-      };
+      } else {
+        setCourses([]); // Clear courses if no department is selected
+      }
+    };
 
-      fetchCourses();
-    }
+    fetchCourses();
   }, [selectedDepartment]);
 
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setNewCourseName(course.name);
+    setNewCourseName(course.course_name);
   };
 
   const handleSaveEdit = async () => {
@@ -58,7 +59,7 @@ const ManageCourses = () => {
         await firebase.firestore().collection('Courses').doc(editingCourse.id).update({
           course_name: newCourseName,
         });
-        setCourses(courses.map(course => course.id === editingCourse.id ? { ...course, name: newCourseName } : course));
+        setCourses(courses.map(course => course.id === editingCourse.id ? { ...course, course_name: newCourseName } : course));
         setEditingCourse(null);
         setNewCourseName('');
       } catch (error) {
@@ -96,7 +97,7 @@ const ManageCourses = () => {
   return (
     <View style={styles.container}>
       <Dropdown
-        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+        style={[styles.dropdown, isFocus && { borderColor: accent }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -118,13 +119,22 @@ const ManageCourses = () => {
             value={newCourseName}
             onChangeText={setNewCourseName}
             placeholder="Course Name"
+            placeholderTextColor="#999"
             style={styles.input}
           />
-          <Button title="Create" onPress={handleCreateCourse} />
-          <Button title="Cancel" onPress={() => setCreatingCourse(false)} />
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity style={styles.createButton} onPress={handleCreateCourse}>
+              <Text style={styles.buttonText}>Create</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setCreatingCourse(false)}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
-        <Button title="Add New Course" onPress={() => setCreatingCourse(true)} />
+        <TouchableOpacity style={styles.addButton} onPress={() => setCreatingCourse(true)}>
+          <Text style={styles.addButtonText}>Add New Course</Text>
+        </TouchableOpacity>
       )}
       {editingCourse && (
         <View style={styles.editForm}>
@@ -132,10 +142,17 @@ const ManageCourses = () => {
             value={newCourseName}
             onChangeText={setNewCourseName}
             placeholder="Course Name"
+            placeholderTextColor="#999"
             style={styles.input}
           />
-          <Button color="#00B200" title="Save" onPress={handleSaveEdit} />
-          <Button color="#B20000" title="Cancel" onPress={() => setEditingCourse(null)} />
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSaveEdit}>
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setEditingCourse(null)}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
       <FlatList
@@ -144,8 +161,14 @@ const ManageCourses = () => {
         renderItem={({ item }) => (
           <View style={styles.courseItem}>
             <Text style={styles.label}>{item.course_name}</Text>
-            <Button color="#0000B2" title="Edit" onPress={() => handleEdit(item)} />
-            <Button color="#B20000" title="Delete" onPress={() => handleDelete(item.id)} />
+            <View style={styles.actionButtons}>
+              <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
+                <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
@@ -157,18 +180,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   dropdown: {
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
     marginBottom: 20,
+    backgroundColor: '#fff', // White background color for the dropdown
   },
   placeholderStyle: {
     fontSize: 16,
-    color: '#aaa',
+    color: '#999',
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -183,35 +208,99 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     marginBottom: 20,
+    alignItems: 'center',
   },
   editForm: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     marginBottom: 20,
+    alignItems: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 8,
     padding: 10,
     marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
+    width: '100%',
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  addButton: {
+    backgroundColor: '#007bff', // Blue color for the button
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  createButton: {
+    backgroundColor: '#00B200',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  saveButton: {
+    backgroundColor: '#00B200',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  cancelButton: {
+    backgroundColor: '#B20000',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  deleteButton: {
+    backgroundColor: '#B20000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  editButton: {
+    backgroundColor: '#0000B2',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginRight: 10,
   },
   courseItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 10,
   },
   label: {
-    borderColor: lightGray,
-    padding: 15,
-    fontSize: 14,
-    backgroundColor: '#f2f2f2',
-    width: screenWidth-180
+    flex: 1,
+    fontSize: 16,
+    color: '#000',
   },
-
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 export default ManageCourses;

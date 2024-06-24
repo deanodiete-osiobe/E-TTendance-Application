@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, FlatList, TouchableOpacity, ScrollView } from '
 import { colors } from '../components/colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const { primary, accent } = colors;
+const { primary, accent, secondary } = colors;
 
 const AttendanceConfirmation = () => {
   const route = useRoute();
@@ -15,9 +15,33 @@ const AttendanceConfirmation = () => {
     if (!input || typeof input !== 'string') {
       return '';
     }
-    let formattedString = input.charAt(0).toUpperCase() + input.slice(1);
-    formattedString = formattedString.replace(/([a-z])([A-Z])/g, '$1 $2');
-    return formattedString;
+
+    const replacements = {
+      examPapersMadeEarly: 'Were the Exam Papers Made Early?',
+      adequateInvigilators: 'Were there adequate invigilators in the exam hall?',
+      physicalStudentCount: 'Physical Student Count',
+      clashingCoursesCount: 'Students with Clashing Courses',
+      studentFellSick: 'Did any students fall sick in the exam hall?',
+      sickstudentCount: 'No. of sick students',
+      absenteeCount: 'Absentees noted',
+      isAbsenteesChecked: 'Were there any absentees?',
+      isDefaultersChecked: 'Were there any defaulters?',
+      lightingBrightEnough: 'Was the lighting bright enough?',
+      seatsWellSpaced: 'Were the seats well spaced?',
+      examVenue: 'Exam Venue',
+      examHallClean: 'Was the exam hall clean',
+      studentsWithClashingCourses: 'Were there students With clashing courses',
+      invigilatorEmail: 'Invigilator Email'
+    };
+
+    if (replacements[input]) {
+      return replacements[input];
+    }
+
+    let formattedString = input.replace(/([a-z])([A-Z])/g, '$1 $2');
+    formattedString = formattedString.replace(/_/g, ' ');
+
+    return formattedString.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   return (
@@ -75,25 +99,32 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: primary,
+    backgroundColor: '#f5f5f5',
   },
   container: {
     flex: 1,
-    backgroundColor: primary,
+    backgroundColor: '#e0e0e0',
     paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    margin: 20,
   },
   confirmButton: {
-    backgroundColor: colors.accent,
-    paddingVertical: 20,
-    paddingHorizontal: 40,
-    borderRadius: 10,
+    backgroundColor: accent,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
     marginTop: 20,
   },
   confirmButtonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
+    textAlign: 'center',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -102,23 +133,33 @@ const styles = StyleSheet.create({
   itemKey: {
     fontWeight: 'bold',
     marginRight: 5,
+    color: '#000', // Black color for better contrast
   },
   itemValue: {
     flexShrink: 1,
+    color: '#000', // Black color for better contrast
   },
   defaulterContainer: {
     marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#ffe6e6',
+    borderRadius: 5,
   },
   defaulterDetails: {
     paddingLeft: 10,
     paddingTop: 5,
+    color: '#000', // Black color for better contrast
   },
   absenteeContainer: {
     marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#e6f2ff',
+    borderRadius: 5,
   },
   absenteeDetails: {
     paddingLeft: 10,
     paddingTop: 5,
+    color: '#000', // Black color for better contrast
   },
 });
 

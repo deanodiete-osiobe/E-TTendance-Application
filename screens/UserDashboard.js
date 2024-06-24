@@ -123,6 +123,7 @@ const UserDashboard = () => {
         value: doc.id,
       }));
       console.log("sample", venues);
+      console.log(examData);
       setVenueData(venues);
     } catch (error) {
       setError("Failed to fetch exam venue data");
@@ -177,7 +178,6 @@ const UserDashboard = () => {
     seatsWellSpaced,
     examHallClean,
     generalComment,
-
     invigilatorEmail,
   };
 
@@ -345,7 +345,7 @@ const UserDashboard = () => {
             </View>
           </View> */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Any absentees?</Text>
+            <Text style={styles.label}>Are there any absentees?</Text>
             <RadioButton.Group
               onValueChange={(newValue) => setIsAbsenteesChecked(newValue)}
               value={isAbsenteesChecked}
@@ -410,7 +410,7 @@ const UserDashboard = () => {
             ))}
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Any defaulters?</Text>
+            <Text style={styles.label}>Are there any defaulters?</Text>
             <RadioButton.Group
               onValueChange={(newValue) => setIsDefaultersChecked(newValue)}
               value={isDefaultersChecked}
@@ -710,6 +710,11 @@ const UserDashboard = () => {
     </View>
   );
 };
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
