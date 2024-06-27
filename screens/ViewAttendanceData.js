@@ -30,7 +30,6 @@ const ViewAttendanceData = () => {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingStats, setLoadingStats] = useState(false);
-  const [status, setStatus] = useState([]);
   const [invigilatorEmail, setInvigilatorEmail] = useState("");
   const [course, setCourse] = useState("");
   const [department, setDepartment] = useState("");
@@ -47,10 +46,10 @@ const ViewAttendanceData = () => {
   const [date, setDate] = useState(new Date());
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(false);
-    setDate(currentDate);
-    setDateString(currentDate.toLocaleDateString());
+    const currentDate = selectedDate || date; // If selectedDate is null, default to current 'date'
+    setShow(false); // Hide the date picker
+    setDate(currentDate); // Set the selected date to state variable 'date'
+    setDateString(currentDate.toLocaleDateString()); // Convert the selected date to a localized string and set it to 'dateString' state variable
   };
 
   useEffect(() => {

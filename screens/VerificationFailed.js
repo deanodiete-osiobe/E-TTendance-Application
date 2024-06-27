@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { colors } from '../components/colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const { primary, accent ,success,fail} = colors;
+const { primary, accent} = colors;
 
 const VerificationFailed = ({ onTryAgain }) => {
   return (

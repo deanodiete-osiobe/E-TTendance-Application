@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import CheckBox from "react-native-check-box";
 import { RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -138,7 +137,7 @@ const UserDashboard = () => {
     setDate(currentDate);
 
     if (mode === "date") {
-      //setDateString(currentDate.toLocaleDateString());
+  
     } else {
       setTimeString(
         currentDate.toLocaleTimeString([], {
@@ -197,12 +196,29 @@ const UserDashboard = () => {
   const handleAbsenteeCountChange = (value) => {
     const count = parseInt(value) || 0;
     setAbsenteeCount(count);
-  };
+
+    // Initialize or trim the absentees array based on count
+    const newAbsentees = [...absentees];
+    if (count > absentees.length) {
+      for (let i = absentees.length; i < count; i++) {
+        newAbsentees.push({ matric: "", firstName: "", surname: "" });
+      }
+    } else {
+      newAbsentees.length = count;
+    }
+    setAbsentees(newAbsentees);
+};
+
+
 
   const handleDefaulterCountChange = (value) => {
     const count = parseInt(value) || 0;
     setDefaulterCount(count);
 
+
+
+
+    
     // Initialize or trim the defaulters array based on count
     const newDefaulters = [...defaulters];
     if (count > defaulters.length) {
@@ -213,6 +229,8 @@ const UserDashboard = () => {
       newDefaulters.length = count;
     }
     setDefaulters(newDefaulters);
+
+
   };
   // Handle changes in individual defaulter fields
   const handleDefaulterChange = (index, field, value) => {
@@ -221,6 +239,7 @@ const UserDashboard = () => {
     setDefaulters(newDefaulters);
   };
 
+  // Handle changes in individual absentee fields
   const handleAbsenteeChange = (index, field, value) => {
     const newAbsentees = [...absentees];
     newAbsentees[index][field] = value;
@@ -333,17 +352,7 @@ const UserDashboard = () => {
             />
           </View>
 
-          {/* <View style={styles.checkboxContainer}>
-            <View style={styles.checkboxGroup}>
-              <CheckBox
-                style={styles.checkbox}
-                onClick={() => setIsAbsenteesChecked(!isAbsenteesChecked)}
-                isChecked={isAbsenteesChecked}
-                checkBoxColor={accent}
-              />
-              <Text style={styles.checkboxLabel}>Any absentees?</Text>
-            </View>
-          </View> */}
+        
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Are there any absentees?</Text>
             <RadioButton.Group
@@ -376,15 +385,15 @@ const UserDashboard = () => {
           </View>
 
           {absenteeCount > 0 &&
-            isAbsenteesChecked == "yes" &&
-            absentees.map((absentees, index) => (
+            isAbsenteesChecked === "yes" &&
+            absentees.map((absentee, index) => (
               <View key={index} style={styles.inputContainer}>
                 <Text style={{ fontWeight: "bold" }}>
                   Absentee No. {index + 1}
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={absentees.matric}
+                  value={absentee.matric}
                   onChangeText={(value) =>
                     handleAbsenteeChange(index, "matric", value)
                   }
@@ -392,7 +401,7 @@ const UserDashboard = () => {
                 />
                 <TextInput
                   style={styles.input}
-                  value={absentees.firstName}
+                  value={absentee.firstName}
                   onChangeText={(value) =>
                     handleAbsenteeChange(index, "firstName", value)
                   }
@@ -400,7 +409,7 @@ const UserDashboard = () => {
                 />
                 <TextInput
                   style={styles.input}
-                  value={absentees.surname}
+                  value={absentee.surname}
                   onChangeText={(value) =>
                     handleAbsenteeChange(index, "surname", value)
                   }
@@ -408,6 +417,7 @@ const UserDashboard = () => {
                 />
               </View>
             ))}
+
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Are there any defaulters?</Text>

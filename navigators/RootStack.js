@@ -10,10 +10,7 @@ const { primary, accent } = colors;
 
 // Screens
 import Login from '../screens/Login';
-import Signup from '../screens/Signup';
-import EmailVerification from '../screens/EmailVerification';
 import ForgotPassword from '../screens/ForgotPassword';
-import ResetPassword from '../screens/ResetPassword';
 import Avatar from '../components/Buttons/Avatar';
 import UserDashboard from '../screens/UserDashboard';
 import AdminDashboard from '../screens/AdminDashboard';
@@ -57,10 +54,7 @@ const RootStack = () => {
         initialRouteName="Login"
       >
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="EmailVerification" component={EmailVerification} options={{ headerTitle: 'Email Verification' }} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: 'Forgot Password' }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerTitle: 'Reset Password' }} />
         <Stack.Screen
           name="UserDashboard"
           component={UserDashboard}
