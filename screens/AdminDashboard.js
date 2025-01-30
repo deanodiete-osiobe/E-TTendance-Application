@@ -5,33 +5,31 @@ import { colors } from '../components/colors';
 const { primary, accent } = colors;
 
 const AdminDashboard = () => {
-  const handleManageUsers = () => {
-    // Logic to navigate to manage users screen
+  const handleManageVenues = () => {
+    // Logic to navigate to manage venues screen
+    navigation.navigate('ManageVenues');
   };
 
   const handleManageCourses = () => {
     // Logic to navigate to manage courses screen
+    navigation.navigate('ManageCourses');
   };
 
   const handleManageDepartments = () => {
     // Logic to navigate to manage departments screen
+    navigation.navigate('ManageDepartments');
   };
 
   const handleViewActivity = () => {
     // Logic to navigate to view activity screen
+    navigation.navigate('ViewActivity');
   };
 
-  const handleConfirmChanges = () => {
-    // Logic to confirm changes and trigger backend actions
-  };
+  
 
   return (
     <View style={styles.container}>
-      {/* Manage Users Button */}
-      <TouchableOpacity style={styles.button} onPress={handleManageUsers}>
-        <Text style={styles.buttonText}>Manage Users</Text>
-      </TouchableOpacity>
-
+      
       {/* Manage Courses Button */}
       <TouchableOpacity style={styles.button} onPress={handleManageCourses}>
         <Text style={styles.buttonText}>Manage Courses</Text>
@@ -42,15 +40,20 @@ const AdminDashboard = () => {
         <Text style={styles.buttonText}>Manage Departments</Text>
       </TouchableOpacity>
 
+
+{/* Manage Venues  Button */}
+      {<TouchableOpacity style={styles.button} onPress={handleManageVenues}>
+        <Text style={styles.buttonText}>Manage Venues</Text>
+      </TouchableOpacity>}
+
+
+
       {/* View Activity Button */}
       <TouchableOpacity style={styles.button} onPress={handleViewActivity}>
         <Text style={styles.buttonText}>View Activity</Text>
       </TouchableOpacity>
 
-      {/* Confirm Changes Button */}
-      <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={handleConfirmChanges}>
-        <Text style={styles.buttonText}>Confirm Changes</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 };

@@ -26,6 +26,7 @@
       "package": "com.odieteapp.fyp"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
